@@ -20,7 +20,7 @@ $VPNUsers = ""
 $lookup = ""
 $VPNGroup = "VPN-Group-name"
 
-
+#region UserAudit
 
 # Define OUs to exclude from search, other business units, service account locations, mailboxes
 $ExcludeOU = @("CN=Monitoring Mailboxes,CN=Microsoft Exchange System Objects,DC=company,DC=local","CN=Users,DC=company,DC=local","OU=Recipients,OU=UTILITY,DC=company,DC=local")
@@ -72,6 +72,61 @@ if ($lookup.ContainsKey($searchTerm)){
     $User | Select-Object "Current User","Action to be taken","Reason for Action","Location",Description,"VPN Access","Continue VPN Access?","OU",LastLogonDate,PasswordLastSet |
     export-excel $XLSX -WorkSheetname 'User Accounts' -Append
 }
+#endregion
+
+
+#Region Admin Account Audit
+
+write-host "Members of Administrators"
+$Administrators = Get-ADGroup Administrators -Properties members |select  -expand members | sort
+foreach ($i in $Administrators){
+try {
+        $Account = ""
+        $Account = Get-ADObject $i -Properties Samaccountname,objectclass,description -ErrorAction 'SilentlyContinue'| Select Samaccountname,objectclass,description
+        $Account | Add-Member -MemberType NoteProperty -Name 'Remove' -Value ""
+        $Account | Add-Member -MemberType NoteProperty -Name 'Reason' -Value ""
+        $Account = $Account | Select-Object Samaccountname,objectclass,description,"Remove","Reason"
+        $Account | export-excel $XLSX -WorkSheetname 'Administrators Group' -Append
+}
+catch{
+
+}
+}
+
+write-host "Members of Domain Administrators"
+$Administrators = Get-ADGroup "Domain Admins" -Properties members |select  -expand members | sort
+$Administrators += Get-ADGroup 'ADAdmin' -Properties members |select  -expand members | sort
+foreach ($i in $Administrators){
+try {
+        $Account = ""
+        $Account = Get-ADObject $i -Properties Samaccountname,objectclass,description -ErrorAction 'SilentlyContinue'| Select Samaccountname,objectclass,description
+        $Account | Add-Member -MemberType NoteProperty -Name 'Remove' -Value ""
+        $Account | Add-Member -MemberType NoteProperty -Name 'Reason' -Value ""
+        $Account = $Account | Select-Object Samaccountname,objectclass,description,"Remove","Reason"
+        $Account | export-excel $XLSX -WorkSheetname 'Domain Admins Group' -Append
+}
+catch{
+
+}
+}
+
+write-host "Members of Enterprise Admins"
+$Administrators = Get-ADGroup "Enterprise Admins" -Properties members |select  -expand members | sort
+$Administrators += Get-ADGroup 'ADAdmin' -Properties members |select  -expand members | sort
+foreach ($i in $Administrators){
+try {
+    $Account = ""
+$Account = Get-ADObject $i -Properties Samaccountname,objectclass,description -ErrorAction 'SilentlyContinue'| Select Samaccountname,objectclass,description
+$Account | Add-Member -MemberType NoteProperty -Name 'Remove' -Value ""
+$Account | Add-Member -MemberType NoteProperty -Name 'Reason' -Value ""
+$Account = $Account | Select-Object Samaccountname,objectclass,description,"Remove","Reason"
+$Account | export-excel $XLSX -WorkSheetname 'Enterprise Admins Group' -Append
+}
+catch{
+
+}
+}
+#endregion
 
 
 
