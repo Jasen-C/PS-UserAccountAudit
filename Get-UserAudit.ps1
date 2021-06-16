@@ -1,5 +1,5 @@
 # Author Jasen C
-# Date 4/18/2021
+# Date 6/16/2021
 # Description: Reusable script used to automate data collection of user accounts for quarterly user account audits. Outputs data to an excel sheet and emails
 # to admins
 
