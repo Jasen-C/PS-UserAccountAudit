@@ -7,4 +7,4 @@ Install-Module -Name ImportExcel
 
 Script also require AD DS module for powershell, or RSAT AD DS to be installed.
 
-Example report data populated in a Lab environment using secframe.com/badblood. All user names and data is randomized.
+Example report data populated in a Lab environment using secframe.com/badblood. All user names and data is randomized and fictious.
